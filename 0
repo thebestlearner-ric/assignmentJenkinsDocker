@@ -1,0 +1,37 @@
+pipeline {
+    agent none
+
+    stages {
+        stage('Docker Build') {
+            agent any
+            steps {
+                echo 'docker build'
+                sh 'docker build -t achistarapp docker'
+            }
+        }
+        stage('Run Docker Container'){
+            agent any
+            steps {
+                echo 'Running docker container'
+                sh 'docker run -d --name achistarcontainer -P achistarapp'
+            }
+        }
+        stage('Tag local image to Repo'){
+            agent any
+            steps{
+                echo 'Tagging local image'
+                sh 'docker tag achistarapp learningric/jenkinsdocker'
+            }
+        }
+        
+        stage('Docker Push'){
+            agent any 
+            steps{
+                echo ;'Publishing..'
+                sh 'docker push learningric/jenkinsdocker:latest'
+            }    
+        }
+        
+    }
+}
+
